@@ -11,7 +11,7 @@ Given a 2D map of `1`s (land) and `0`s water, count the number of islands.
 
 ## Examples:
 
-###Example 1 (result: 1)
+### Example 1 (result: 1)
 
 ```json
 [
@@ -20,7 +20,7 @@ Given a 2D map of `1`s (land) and `0`s water, count the number of islands.
 ]
 ```
 
-###Example 2 (result: 2)
+### Example 2 (result: 2)
 
 ```json
 [
