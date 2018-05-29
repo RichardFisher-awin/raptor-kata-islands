@@ -59,7 +59,7 @@ class IslandCounterSpec extends ObjectBehavior
             [1, 0, 0, 0, 1],
             [1, 0, 1, 0, 1],
             [1, 0, 0, 0, 1],
-	    [1, 1, 1, 1, 1]
+	        [1, 1, 1, 1, 1]
         ];
         $this->countIslands($map)->shouldBe(2);
     }
@@ -118,6 +118,16 @@ function it_can_count_example_ten()
             [0, 1, 0, 1, 0],
             [1, 1, 0, 1, 1],
             [1, 0, 0, 0, 1]
+        ];
+        $this->countIslands($map)->shouldBe(1);
+    }
+
+    function it_can_count_example_eleven()
+    {
+        $map = [
+            [1, 1, 1, 1, 1],
+            [0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1],
         ];
         $this->countIslands($map)->shouldBe(1);
     }
