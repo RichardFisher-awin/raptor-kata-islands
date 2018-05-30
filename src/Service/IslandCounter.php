@@ -5,45 +5,93 @@ use Kata\{Map, Area};
 
 class IslandCounter
 {
+    private $data;
+    private $registeredLand = [];
+    private $neighborhood = [];
+
     public function countIslands(array $data) : int
     {
+        $this->data = $data;
         $island = 0;
+        $this->registeredLand = [];
 
         foreach($data as $key=>$row) {
             for($i=0; $i<count($row); $i++) {
                 if ($row[$i] == 1) {
-                    if (! $this->isAnotherLandNextToMe($key, $i, $data)) {
-                        $island ++;
+                    if ( ! $this->isNeighborRegistered($key, $i)) {
+                        $this->addToRegisteredLand($key, $i);
                     }
-                    if ($island == 0 ) { # if land is found and no land around me than I am the island
-                        $island ++;
-                    }
+                    $this->registerNeighbor($key, $i);
                 }
             }
         }
-        return $island;
+        return count($this->registeredLand);
     }
 
-    private function isAnotherLandNextToMe($key, $i, $data)
+    private function addToRegisteredLand($key, $index)
     {
-        if ( isset($data[($key-1)][$i]) ) { # no land above me
-            if ( $data[($key-1)][$i] == 1) {
+        $this->registeredLand[] = [$key, $index];
+    }
+
+    private function isNeighborRegistered($key, $index)
+    {
+        $indexMinusOne = $index-1;
+        $indexPlusOne = $index+1;
+
+        $neighbors = [
+            $key-1 . ',' . $index,
+            $key+1 . ',' . $index,
+            $key . ',' . $indexMinusOne,
+            $key . ',' . $indexPlusOne
+        ];
+        foreach($neighbors as $neighbor) {
+            if (in_array($neighbor, $this->neighborhood)) {
                 return true;
             }
         }
-        if (isset($data[$key][$i-1]) ) { # no land before me
-            if ( $data[$key][$i-1] == 1) {
-                return true;
+
+        return false;
+    }
+
+    private function registerNeighbor($key, $index)
+    {
+        $indexMinusOne = $index-1;
+        $indexPlusOne = $index+1;
+        $neighbors = [
+            $key . ',' . $index,
+            $key-1 . ',' . $index,
+            $key+1 . ',' . $index,
+            $key . ',' . $indexMinusOne,
+            $key . ',' . $indexPlusOne
+        ];
+        foreach($neighbors as $neighbor) {
+            if ( $this->isNeighborHasLand($neighbor) ) {
+                if ( ! in_array($neighbor, $this->neighborhood)) {
+                    $this->neighborhood[] = $neighbor;
+                }
+                $this->registerLeft($key+1, $index-1);
             }
         }
-        if (isset($data[$key][$i+1]) && isset($data[$key-1][$i+1]) ) {
-            if ($data[$key][$i+1] == 1 && $data[$key-1][$i+1] == 1) { # if land after me, then must have land above it
-                return true;
-            } elseif( isset($data[$key][$i+2]) ) {
-                if ($data[$key][$i+1] == 1 && $data[$key][$i+2] == 1 ) { # if land after me, then must have land after it
-                    return true;
+    }
+
+    private function registerLeft($key, $index)
+    {
+        for($i=$index;$i>=0; $i--) {
+            if ( isset($this->data[$key][$i]) ) {
+                if (  $this->data[$key][$i] == 0 ) {
+                    return;
+                } else {
+                    $this->neighborhood[] = $key . ',' . $i;
                 }
             }
+        }
+    }
+
+    private function isNeighborHasLand($neighbor)
+    {
+        $address = explode(',',$neighbor);
+        if ( isset($this->data[$address[0]][$address[1]]) ) {
+            return $this->data[$address[0]][$address[1]] == 1;
         }
 
         return false;
